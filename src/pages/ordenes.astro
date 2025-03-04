@@ -1,5 +1,7 @@
 ---
 import TomaOrdenes from "../components/TomaOrdenes.jsx";
+import "../styles/global.css"; // ✅ Importar Tailwind
 ---
 
-<TomaOrdenes />
+<TomaOrdenes client:load />
+<div class="hidden bg-red-500 text-blue-500 border-green-500"></div>
