@@ -1,6 +1,8 @@
 import { defineConfig } from "astro/config";
-import react from "@astrojs/react"; // 👈 Importar el soporte para React
+import vercel from "@astrojs/vercel/server"; // ✅ Importar el adaptador de Vercel
+import react from "@astrojs/react"; // ✅ Si usas React en Astro
 
 export default defineConfig({
-  integrations: [react()], // 👈 Agregar React como integración
+  adapter: vercel(), // ✅ Usar el adaptador de Vercel
+  integrations: [react()], // ✅ Integración con React
 });
