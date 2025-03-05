@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel"; // ✅ Importar el adaptador de Vercel
-import react from "@astrojs/react"; // ✅ Si usas React en Astro
+import vercel from "@astrojs/vercel"; // ✅ Importación correcta
+import react from "@astrojs/react";
 
 export default defineConfig({
-  adapter: vercel(), // ✅ Usar el adaptador de Vercel
-  integrations: [react()], // ✅ Integración con React
+  adapter: vercel(), // ✅ Adaptador correcto para Vercel
+  integrations: [react()], // ✅ Si usas React
 });
