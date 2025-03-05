@@ -11,7 +11,7 @@ export async function connectDB() {
         sshClient.forwardOut(
           "127.0.0.1",
           3306,
-          process.env.DATABASE_HOST, // La VM en Google Cloud
+          process.env.DATABASE_HOST, // La IP de MySQL en SiteGround
           3306,
           async (err, stream) => {
             if (err) {
@@ -20,7 +20,7 @@ export async function connectDB() {
             }
 
             const pool = mysql.createPool({
-              host: "127.0.0.1", // Se conecta a MySQL a través del túnel SSH
+              host: "127.0.0.1", // Se conecta a través del túnel SSH
               user: process.env.DATABASE_USER,
               password: process.env.DATABASE_PASSWORD,
               database: process.env.DATABASE_NAME,
@@ -38,7 +38,7 @@ export async function connectDB() {
         host: process.env.SSH_HOST, // La IP de la VM en Google Cloud
         port: 22,
         username: process.env.SSH_USER, // Usuario de la VM
-        privateKey: fs.readFileSync("/root/.ssh/vercel_vm"), // Clave SSH privada
+        privateKey: fs.readFileSync("/root/.ssh/vercel_vm"), // Clave privada SSH
       });
   });
 }

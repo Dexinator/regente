@@ -1,10 +1,11 @@
 export const prerender = false; // Permite peticiones dinámicas
 
-import pool from "../../lib/db";
+import { connectDB } from "../../lib/db";
 
 // 🟢 Agregar productos a una orden
 export async function POST({ request }) {
   try {
+    const db = await connectDB(); // Usa la conexión con SSH
     const { orden_id, producto_id, cantidad, precio_unitario } = await request.json();
 
     if (!orden_id || !producto_id || !cantidad || !precio_unitario) {
@@ -14,7 +15,7 @@ export async function POST({ request }) {
       );
     }
 
-    const [result] = await pool.query(
+    const [result] = await db.execute(
       "INSERT INTO detalles_orden (orden_id, producto_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)",
       [orden_id, producto_id, cantidad, precio_unitario]
     );
@@ -34,6 +35,7 @@ export async function POST({ request }) {
 // 🔵 Obtener los productos de una orden
 export async function GET({ request }) {
   try {
+    const db = await connectDB(); // Usa la conexión con SSH
     const url = new URL(request.url);
     const orden_id = url.searchParams.get("orden_id");
 
@@ -44,7 +46,7 @@ export async function GET({ request }) {
       );
     }
 
-    const [productos] = await pool.query(
+    const [productos] = await db.execute(
       `SELECT d.id, d.orden_id, p.nombre, d.cantidad, d.precio_unitario, (d.cantidad * d.precio_unitario) AS total
        FROM detalles_orden d
        JOIN productos p ON d.producto_id = p.id
