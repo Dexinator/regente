@@ -1,11 +1,12 @@
 export const prerender = false; // Permite peticiones dinámicas
 
-import pool from "../../lib/db";
+import { connectDB } from "../../lib/db";
 
 // 🟢 Obtener la lista de productos
 export async function GET() {
   try {
-    const [productos] = await pool.query("SELECT * FROM productos");
+    const db = await connectDB(); // Usa la conexión con SSH
+    const [productos] = await db.execute("SELECT * FROM productos");
 
     return new Response(JSON.stringify({ success: true, productos }), {
       headers: { "Content-Type": "application/json" },
