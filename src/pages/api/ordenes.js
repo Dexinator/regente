@@ -1,13 +1,14 @@
-export const prerender = false; 
+export const prerender = false;
 
-import pool from "../../lib/db";
+import { connectDB } from "../../lib/db";
 
 // 🟢 Crear una nueva orden (preso_id opcional)
 export async function POST({ request }) {
   try {
+    const db = await connectDB(); // Usa la conexión con SSH
     const { preso_id = null, nombre_cliente, total, empleado_id } = await request.json();
 
-    const [result] = await pool.query(
+    const [result] = await db.execute(
       "INSERT INTO ordenes (preso_id, nombre_cliente, total, empleado_id) VALUES (?, ?, ?, ?)",
       [preso_id, nombre_cliente, total, empleado_id]
     );
@@ -24,10 +25,10 @@ export async function POST({ request }) {
   }
 }
 
-
 // 🔵 Obtener detalles de una orden
 export async function GET({ request }) {
   try {
+    const db = await connectDB(); // Usa la conexión con SSH
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
 
@@ -38,7 +39,7 @@ export async function GET({ request }) {
       });
     }
 
-    const [orden] = await pool.query("SELECT * FROM ordenes WHERE id = ?", [id]);
+    const [orden] = await db.execute("SELECT * FROM ordenes WHERE id = ?", [id]);
     if (orden.length === 0) {
       return new Response(JSON.stringify({ success: false, error: "Orden no encontrada" }), {
         headers: { "Content-Type": "application/json" },
@@ -60,6 +61,7 @@ export async function GET({ request }) {
 // 🟠 Cerrar una orden
 export async function PUT({ request }) {
   try {
+    const db = await connectDB(); // Usa la conexión con SSH
     const { id } = await request.json();
     if (!id) {
       return new Response(JSON.stringify({ success: false, error: "ID de orden requerido" }), {
@@ -68,7 +70,7 @@ export async function PUT({ request }) {
       });
     }
 
-    await pool.query("UPDATE ordenes SET estado = 'cerrada' WHERE id = ?", [id]);
+    await db.execute("UPDATE ordenes SET estado = 'cerrada' WHERE id = ?", [id]);
 
     return new Response(JSON.stringify({ success: true, message: "Orden cerrada" }), {
       headers: { "Content-Type": "application/json" },
