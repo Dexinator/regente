@@ -4,6 +4,12 @@ import fs from "fs";
 
 const sshClient = new Client();
 
+// Si se define la variable SSH_PRIVATE_KEY, se usa y se formatea correctamente;
+// de lo contrario, se intenta leer la clave desde el archivo.
+const privateKey = process.env.SSH_PRIVATE_KEY 
+  ? process.env.SSH_PRIVATE_KEY.replace(/\\n/g, "\n")
+  : fs.readFileSync("/root/.ssh/vercel_vm");
+
 export async function connectDB() {
   return new Promise((resolve, reject) => {
     sshClient
@@ -38,7 +44,7 @@ export async function connectDB() {
         host: process.env.SSH_HOST, // La IP de la VM en Google Cloud
         port: 22,
         username: process.env.SSH_USER, // Usuario de la VM
-        privateKey: fs.readFileSync("/root/.ssh/vercel_vm"), // Clave privada SSH
+        privateKey, // Usa la clave privada desde la variable o el archivo
       });
   });
 }
