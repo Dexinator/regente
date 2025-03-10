@@ -1,14 +1,15 @@
 import mysql from "mysql2/promise";
 import { Client } from "ssh2";
 import fs from "fs";
+import "dotenv/config";
 
 const sshClient = new Client();
 
 // Si se define la variable SSH_PRIVATE_KEY, se usa y se formatea correctamente;
 // de lo contrario, se intenta leer la clave desde el archivo.
-const privateKey = process.env.SSH_PRIVATE_KEY 
+const privateKey = process.env.SSH_PRIVATE_KEY
   ? process.env.SSH_PRIVATE_KEY.replace(/\\n/g, "\n")
-  : fs.readFileSync("/root/.ssh/vercel_vm");
+  : fs.readFileSync("C:/Users/Jorge/.ssh/google_cloud");
 
 export async function connectDB() {
   return new Promise((resolve, reject) => {
