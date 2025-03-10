@@ -9,7 +9,7 @@ const sshClient = new Client();
 // de lo contrario, se intenta leer la clave desde el archivo.
 const privateKey = process.env.SSH_PRIVATE_KEY
   ? process.env.SSH_PRIVATE_KEY.replace(/\\n/g, "\n")
-  : fs.readFileSync("C:/Users/Jorge/.ssh/google_cloud");
+  : fs.readFileSync("C:/Users/jbadi/.ssh/google_cloud");
 
 export async function connectDB() {
   return new Promise((resolve, reject) => {

@@ -1,7 +1,10 @@
 ---
 import TomaOrdenes from "../components/TomaOrdenes.jsx";
 import "../styles/global.css"; // ✅ Importar Tailwind
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<TomaOrdenes client:load />
+<BaseLayout title="Reportes de Ventas">
+    <TomaOrdenes client:load />
 <div class="hidden bg-red-500 text-blue-500 border-green-500"></div>
+</BaseLayout>

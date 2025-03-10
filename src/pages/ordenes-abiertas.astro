@@ -1,7 +1,10 @@
 ---
 import OpenOrders from "../components/OpenOrders.jsx";
 import "../styles/global.css"; // Asegúrate de importar Tailwind
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
+<BaseLayout title="Reportes de Ventas">
 <OpenOrders client:load />
 <div class="hidden bg-red-500 text-blue-500 border-green-500"></div>
+</BaseLayout>
