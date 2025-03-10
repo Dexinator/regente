@@ -5,12 +5,16 @@ export default function TomaOrdenes() {
   const [orden, setOrden] = useState([]);
   const [total, setTotal] = useState(0);
   const [filtro, setFiltro] = useState(""); // Estado para el filtro
+  const [cargado, setCargado] = useState(false); // 🔵 Previene la hidratación temprana
 
   useEffect(() => {
+    setCargado(true); // 🔵 Evita que el componente se renderice antes de tiempo
     fetch("/api/productos")
       .then((res) => res.json())
       .then((data) => setProductos(data.productos));
   }, []);
+
+  if (!cargado) return null; // 🔵 Previene errores de hidratación
 
   const agregarProducto = (producto) => {
     const nuevaOrden = [...orden];

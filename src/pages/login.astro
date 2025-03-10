@@ -1,0 +1,9 @@
+---
+import UsersLogin from "../components/Login.jsx";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Iniciar Sesión">
+    <div class="hidden bg-red-500 text-blue-500 border-green-500"></div>
+  <UsersLogin client:load />
+</BaseLayout>

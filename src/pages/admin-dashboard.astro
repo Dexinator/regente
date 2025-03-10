@@ -1,0 +1,8 @@
+---
+import ProtectedLayout from "../components/ProtectedLayout.jsx";
+import AdminDashB from "../components/AdminDashboard.jsx";
+---
+
+<ProtectedLayout client:only="react">
+  <AdminDashB  client:load/>
+</ProtectedLayout>

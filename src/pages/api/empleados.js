@@ -6,8 +6,8 @@ import bcrypt from "bcryptjs";
 export async function POST({ request }) {
   try {
     const { nombre, usuario, contraseña, rol } = await request.json();
-    
-    // Verificar que los campos estén completos
+
+    // Verificar que los campos sean obligatorios
     if (!nombre || !usuario || !contraseña || !rol) {
       return new Response(JSON.stringify({ success: false, error: "Todos los campos son obligatorios" }), {
         headers: { "Content-Type": "application/json" },
@@ -41,7 +41,7 @@ export async function POST({ request }) {
 
     // Insertar el nuevo empleado en la base de datos
     await db.execute(
-      "INSERT INTO empleados (nombre, usuario, contraseña, rol) VALUES (?, ?, ?, ?)",
+      "INSERT INTO empleados (nombre, usuario, contraseña, rol, fecha_registro) VALUES (?, ?, ?, ?, NOW())",
       [nombre, usuario, hashedPassword, rol]
     );
 

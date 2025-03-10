@@ -1,10 +1,10 @@
 ---
 import OpenOrders from "../components/OpenOrders.jsx";
 import "../styles/global.css"; // Asegúrate de importar Tailwind
-import BaseLayout from "../layouts/BaseLayout.astro";
+
+import ProtectedLayout from "../components/ProtectedLayout";
 ---
 
-<BaseLayout title="Reportes de Ventas">
+<ProtectedLayout client:only="react">
 <OpenOrders client:load />
-<div class="hidden bg-red-500 text-blue-500 border-green-500"></div>
-</BaseLayout>
+</ProtectedLayout>

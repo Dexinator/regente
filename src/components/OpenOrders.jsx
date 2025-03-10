@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 export default function OpenOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cargado, setCargado] = useState(false); // 🔵 Previene la hidratación temprana
 
   // Función para obtener las órdenes abiertas
   const fetchOrders = async () => {
@@ -22,6 +23,7 @@ export default function OpenOrders() {
   };
 
   useEffect(() => {
+    setCargado(true); // 🔵 Evita que el componente se hidrate antes de tiempo
     fetchOrders();
   }, []);
 
@@ -45,7 +47,8 @@ export default function OpenOrders() {
     }
   };
 
-  if (loading) return <p className="p-4 text-white">Cargando órdenes...</p>;
+  // 🔵 Previene errores de hidratación en SSR
+  if (!cargado) return null;
 
   return (
     <div className="flex flex-col h-screen bg-[#721422] text-white">
@@ -53,7 +56,9 @@ export default function OpenOrders() {
         Órdenes Abiertas
       </header>
       <div className="flex-1 overflow-y-auto p-4">
-        {orders.length === 0 ? (
+        {loading ? (
+          <p className="p-4 text-white">Cargando órdenes...</p>
+        ) : orders.length === 0 ? (
           <p className="text-gray-300">No hay órdenes abiertas.</p>
         ) : (
           <ul className="space-y-4">
