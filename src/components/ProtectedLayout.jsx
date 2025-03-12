@@ -1,7 +1,7 @@
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import Header from "./Header.jsx"; // ✅ Importar Header
 import Footer from "./Footer.jsx"; // ✅ Importar Footer
-import "src/styles/global.css"; // ✅ Importar Tailwind
+import "../styles/global.css"; // ✅ Importar Tailwind
 
 export default function ProtectedLayout({ children }) {
   return (
