@@ -21,7 +21,6 @@
     "ssh2": "^1.16.0"
   },
   "devDependencies": {
-    "@astrojs/tailwind": "^6.0.0",
     "@astrojs/vercel": "^8.1.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
