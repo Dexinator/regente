@@ -1,7 +1,8 @@
 ---
 import ProtectedLayoutr from "../components/ProtectedLayout.jsx"
+
 ---
 
-<ProtectedLayoutr  client:load>
+<ProtectedLayoutr  client:only="react">
 <slot/>
 </ProtectedLayoutr>
