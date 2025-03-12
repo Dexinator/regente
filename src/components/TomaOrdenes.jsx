@@ -1,22 +1,45 @@
 import { useState, useEffect } from "react";
 
 export default function TomaOrdenes() {
+  const [ordenId, setOrdenId] = useState(null);
   const [productos, setProductos] = useState([]);
   const [orden, setOrden] = useState([]);
   const [total, setTotal] = useState(0);
-  const [filtro, setFiltro] = useState(""); // Estado para el filtro
-  const [cargado, setCargado] = useState(false); // 🔵 Previene la hidratación temprana
+  const [filtro, setFiltro] = useState("");
+  const [cargado, setCargado] = useState(false);
+  const empleado = JSON.parse(localStorage.getItem("empleado")); // Obtener empleado autenticado
+  const empleadoId = empleado?.id || null; // Asegurar que tenemos empleado_id
 
   useEffect(() => {
-    setCargado(true); // 🔵 Evita que el componente se renderice antes de tiempo
+    if (typeof window !== "undefined") {
+      const id = new URLSearchParams(window.location.search).get("orden_id");
+      setOrdenId(id);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!ordenId) return;
+    
+    setCargado(true);
     fetch("/api/productos")
       .then((res) => res.json())
       .then((data) => setProductos(data.productos));
-  }, []);
 
-  if (!cargado) return null; // 🔵 Previene errores de hidratación
+    fetch(`/api/ordenes?id=${ordenId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setOrden(data.orden.detalles || []);
+          setTotal(data.orden.total || 0);
+        }
+      });
+  }, [ordenId]);
 
-  const agregarProducto = (producto) => {
+  if (!ordenId) return <p className="text-white">Cargando orden...</p>; 
+
+  const agregarProducto = async (producto) => {
+    if (!ordenId || !empleadoId) return alert("Error: No se pudo identificar la orden o empleado");
+
     const nuevaOrden = [...orden];
     const index = nuevaOrden.findIndex((item) => item.id === producto.id);
 
@@ -28,12 +51,18 @@ export default function TomaOrdenes() {
 
     setOrden(nuevaOrden);
     calcularTotal(nuevaOrden);
-  };
 
-  const eliminarProducto = (id) => {
-    const nuevaOrden = orden.filter((item) => item.id !== id);
-    setOrden(nuevaOrden);
-    calcularTotal(nuevaOrden);
+    await fetch("/api/detalles_orden", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orden_id: ordenId,
+        producto_id: producto.id,
+        cantidad: 1,
+        precio_unitario: producto.precio,
+        empleado_id: empleadoId,
+      }),
+    });
   };
 
   const calcularTotal = (orden) => {
@@ -41,54 +70,16 @@ export default function TomaOrdenes() {
     setTotal(total);
   };
 
-  const enviarOrden = async () => {
-    if (orden.length === 0) return alert("La orden está vacía");
-
-    const response = await fetch("/api/ordenes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nombre_cliente: "Cliente en barra",
-        total,
-        empleado_id: 1,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      for (const item of orden) {
-        await fetch("/api/detalles_orden", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orden_id: data.orderId,
-            producto_id: item.id,
-            cantidad: item.cantidad,
-            precio_unitario: item.precio,
-          }),
-        });
-      }
-
-      alert("Orden enviada con éxito!");
-      setOrden([]);
-      setTotal(0);
-    } else {
-      alert("Error al enviar la orden");
-    }
+  const eliminarProducto = async (id) => {
+    const nuevaOrden = orden.filter((item) => item.id !== id);
+    setOrden(nuevaOrden);
+    calcularTotal(nuevaOrden);
   };
-
-  // Filtrar productos por nombre o categoría
-  const productosFiltrados = productos.filter(
-    (p) =>
-      p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-      (p.categoria && p.categoria.toLowerCase().includes(filtro.toLowerCase()))
-  );
 
   return (
     <div className="flex flex-col h-screen bg-[#721422] text-white">
       <header className="p-4 text-center bg-[#DC9D00] text-black font-bold text-lg">
-        Toma de Órdenes
+        Toma de Órdenes - Orden #{ordenId}
       </header>
 
       {/* Campo de búsqueda */}
@@ -104,9 +95,13 @@ export default function TomaOrdenes() {
       {/* Lista de productos */}
       <div className="flex-1 overflow-y-auto p-4">
         <h2 className="text-lg font-semibold mb-2">Selecciona un producto:</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3"> 
-          {productosFiltrados.length > 0 ? (
-            productosFiltrados.map((producto) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {productos
+            .filter((p) =>
+              p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+              (p.categoria && p.categoria.toLowerCase().includes(filtro.toLowerCase()))
+            )
+            .map((producto) => (
               <button
                 key={producto.id}
                 className="p-4 bg-white text-black rounded-lg shadow-md text-lg font-semibold text-center"
@@ -114,10 +109,7 @@ export default function TomaOrdenes() {
               >
                 {producto.nombre} <br /> <span className="font-bold">${producto.precio}</span>
               </button>
-            ))
-          ) : (
-            <p className="text-gray-400">No hay productos que coincidan con la búsqueda.</p>
-          )}
+            ))}
         </div>
       </div>
 
@@ -137,12 +129,6 @@ export default function TomaOrdenes() {
         )}
         <hr className="my-2" />
         <h3 className="text-xl font-bold">Total: ${total.toFixed(2)}</h3>
-        <button
-          className="mt-2 p-4 bg-[#DC9D00] text-black rounded-lg shadow-md w-full text-xl font-semibold"
-          onClick={enviarOrden}
-        >
-          Enviar Orden
-        </button>
       </div>
     </div>
   );

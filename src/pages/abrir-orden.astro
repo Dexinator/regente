@@ -1,0 +1,9 @@
+---
+import AbrirOrder from "../components/AbrirOrden.jsx";
+import "../styles/global.css"; // ✅ Importar estilos globales
+import ProtectedLayout from "../layouts/ProtectedLayout.astro";
+---
+
+<ProtectedLayout>
+  <AbrirOrder client:load />
+</ProtectedLayout>
