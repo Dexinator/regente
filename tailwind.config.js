@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{astro,js,jsx,ts,tsx}"], // ✅ Asegurar que Astro detecte Tailwind
+  content: [
+    "./src/**/*.{astro,html,js,jsx,ts,tsx}", // ✅ Asegurar que analiza todas las páginas y componentes
+  ],
   theme: {
     extend: {},
   },
