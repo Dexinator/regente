@@ -3,6 +3,6 @@ import ProtectedLayout from "../layouts/ProtectedLayout.astro";
 import AdminDashB from "../components/AdminDashboard.jsx";
 ---
 
-<ProtectedLayout client:only="react">
+<ProtectedLayout>
   <AdminDashB  client:load/>
 </ProtectedLayout>
