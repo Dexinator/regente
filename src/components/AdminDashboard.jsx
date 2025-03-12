@@ -8,12 +8,23 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    // Simulación de datos (se conectará a API en el futuro)
-    setStats({
-      ordenesAbiertas: 5,
-      ingresosHoy: 3200,
-      empleadosActivos: 8,
-    });
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/admin-stats");
+        const data = await res.json();
+        if (data.success) {
+          setStats({
+            ordenesAbiertas: data.ordenesAbiertas,
+            ingresosHoy: data.ingresosHoy,
+            empleadosActivos: data.empleadosActivos,
+          });
+        }
+      } catch (error) {
+        console.error("Error al obtener estadísticas:", error);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   return (
