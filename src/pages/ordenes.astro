@@ -3,7 +3,7 @@ import TomaOrdenes from "../components/TomaOrdenes.jsx";
 import "../styles/global.css"; // ✅ Importar Tailwind
 import ProtectedLayout from "../layouts/ProtectedLayout.astro";
 ---
-<ProtectedLayout client:only="react">
+<ProtectedLayout>
 
     <TomaOrdenes client:load />
 </ProtectedLayout>
