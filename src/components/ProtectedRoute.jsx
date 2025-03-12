@@ -2,6 +2,24 @@ import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 
 export default function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = "/login";
+    }
+  }, [isAuthenticated]);
+
+  return isAuthenticated ? children : null;
+}
+
+
+
+
+/*import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+
+export default function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
@@ -14,3 +32,4 @@ export default function ProtectedRoute({ children }) {
 
   return isAuthenticated ? children : null;
 }
+  */
