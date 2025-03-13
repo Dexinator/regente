@@ -6,21 +6,27 @@ export default function TomaOrdenes() {
   const [orden, setOrden] = useState([]);
   const [total, setTotal] = useState(0);
   const [filtro, setFiltro] = useState("");
-  const [cargado, setCargado] = useState(false);
-  const empleado = JSON.parse(localStorage.getItem("empleado")); // Obtener empleado autenticado
-  const empleadoId = empleado?.id || null; // Asegurar que tenemos empleado_id
+  const [empleadoId, setEmpleadoId] = useState(null); // ✅ Estado para empleado_id
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const id = new URLSearchParams(window.location.search).get("orden_id");
       setOrdenId(id);
+
+      const empleado = localStorage.getItem("empleado");
+      if (empleado) {
+        try {
+          setEmpleadoId(JSON.parse(empleado).id);
+        } catch (error) {
+          console.error("Error al parsear empleado:", error);
+        }
+      }
     }
   }, []);
 
   useEffect(() => {
     if (!ordenId) return;
-    
-    setCargado(true);
+
     fetch("/api/productos")
       .then((res) => res.json())
       .then((data) => setProductos(data.productos));
@@ -35,7 +41,7 @@ export default function TomaOrdenes() {
       });
   }, [ordenId]);
 
-  if (!ordenId) return <p className="text-white">Cargando orden...</p>; 
+  if (!ordenId) return <p className="text-white">Cargando orden...</p>;
 
   const agregarProducto = async (producto) => {
     if (!ordenId || !empleadoId) return alert("Error: No se pudo identificar la orden o empleado");
